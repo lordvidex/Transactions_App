@@ -2,6 +2,7 @@ import 'package:expenses_app/widgets/transaction_list.dart';
 import 'package:expenses_app/widgets/transcation_textfields.dart';
 import 'package:flutter/material.dart';
 import './models/transaction.dart';
+import './widgets/chart.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,12 +14,13 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Quicksand',
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(
-            title: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontFamily: 'OpenSans',
-              fontSize: 20,
-            )
-          )
+                title: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'OpenSans',
+                  fontSize: 20,
+                ),
+                button: TextStyle(color: Colors.white),
+              ),
         ),
         primarySwatch: Colors.purple,
       ),
@@ -35,7 +37,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  
+  //original lists all time
+
   final List<Transaction> _transactionLists = [];
+  
+  //getting the recent transaction lists
+  
+  List<Transaction> get _recentTransactions {
+    return _transactionLists.where((transaction) {
+      return transaction.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
+
   void _addNewTransactions(String txTitle, double txAmount) {
     final newTx = Transaction(
         title: txTitle,
@@ -52,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: ctx,
       builder: (_) {
         return GestureDetector(
-          onTap: (){},
+          onTap: () {},
           behavior: HitTestBehavior.opaque,
           child: NewTransaction(_addNewTransactions),
         );
@@ -77,19 +95,19 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.add),
           )
         ],
-        title: Text('Expenses App',style: TextStyle(
-          fontFamily: 'OpenSans',
-        ),),
+        title: Text(
+          'Expenses App',
+          style: TextStyle(
+            fontFamily: 'OpenSans',
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Card(
-              color: Colors.blue,
-              child: Text('Chart'),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_transactionLists),
           ],
         ),
