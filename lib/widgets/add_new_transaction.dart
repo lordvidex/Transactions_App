@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
 
@@ -24,7 +25,7 @@ class _NewTransactionState extends State<NewTransaction> {
     widget.addNewTransaction(
       titleGuy,
       amountGuy,
-      selectedDate==null?DateTime.now():selectedDate,
+      selectedDate == null ? DateTime.now() : selectedDate,
     );
     Navigator.of(context).pop();
   }
@@ -47,59 +48,66 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              controller: titleController,
-              onSubmitted: (_) => _checkForErrors,
-              decoration: InputDecoration(
-                labelText: 'Title',
+    return SingleChildScrollView(
+          child: Card(
+        elevation: 5,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+            top: 10,
+            left: 10,
+            right: 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                controller: titleController,
+                onSubmitted: (_) => _checkForErrors,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
               ),
-            ),
-            TextField(
-              onSubmitted: (_) => _checkForErrors,
-              keyboardType:
-                  TextInputType.numberWithOptions(signed: false, decimal: true),
-              controller: amountController,
-              decoration: InputDecoration(
-                labelText: 'Amount',
+              TextField(
+                onSubmitted: (_) => _checkForErrors,
+                keyboardType:
+                    TextInputType.numberWithOptions(signed: false, decimal: true),
+                controller: amountController,
+                decoration: InputDecoration(
+                  labelText: 'Amount',
+                ),
               ),
-            ),
-            //Add the DatePicker here
-            Container(
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    selectedDate == null
-                        ? 'No date selected!'
-                        : DateFormat.yMd().format(selectedDate),
-                  ),
-                  FlatButton(
-                    onPressed: openDatePicker,
-                    child: Text(
-                      'Select Date',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor),
+              //Add the DatePicker here
+              Container(
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      selectedDate == null
+                          ? 'No date selected!'
+                          : DateFormat.yMd().format(selectedDate),
                     ),
-                  ),
-                ],
+                    FlatButton(
+                      onPressed: openDatePicker,
+                      child: Text(
+                        'Select Date',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            RaisedButton(
-              child: Text('Add Transaction'),
-              color: Theme.of(context).primaryColor,
-              textColor: Theme.of(context).textTheme.button.color,
-              onPressed: _checkForErrors,
-            ),
-          ],
+              RaisedButton(
+                child: Text('Add Transaction'),
+                color: Theme.of(context).primaryColor,
+                textColor: Theme.of(context).textTheme.button.color,
+                onPressed: _checkForErrors,
+              ),
+            ],
+          ),
         ),
       ),
     );

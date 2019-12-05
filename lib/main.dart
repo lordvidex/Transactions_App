@@ -1,21 +1,18 @@
-import 'package:expenses_app/widgets/transaction_list.dart';
-import 'package:expenses_app/widgets/add_new_transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import './models/transaction.dart';
-import './widgets/chart.dart';
 
-void main() { 
-  //Forces to portrait mode only 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown,DeviceOrientation.portraitUp]);
-  //SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+import './widgets/transaction_list.dart';
+import './widgets/add_new_transaction.dart';
+import './widgets/chart.dart';
+import './models/transaction.dart';
+import './widgets/app_body.dart';
+
+void main() {
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.purple,
@@ -55,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //original lists all time
 
   final List<Transaction> _transactionLists = [];
-
+  bool _showChart = false;
   //getting the recent transaction lists
 
   List<Transaction> get _recentTransactions {
@@ -101,6 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final bool isPortrait = mediaQuery.orientation == Orientation.portrait;
+
+    //Appbar separated so that we can calculate the available space left
+    //when assigning our mainPage size....
     final appBar = AppBar(
       elevation: 0.0,
       backgroundColor: Theme.of(context).primaryColorLight,
@@ -110,38 +112,36 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: Icon(Icons.add),
         )
       ],
-      title: Text(
+      title: const Text(
         'Expenses App',
         style: TextStyle(
           fontFamily: 'OpenSans',
         ),
       ),
     );
+
+    final txList = Container(
+      height: (mediaQuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.7,
+      child: TransactionList(_transactionLists, _deleteTransaction),
+    );
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => startAddNewTransaction(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       appBar: appBar,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.3,
-              child: Chart(_recentTransactions)),
-          Container(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.7,
-              child: TransactionList(_transactionLists, _deleteTransaction)),
-        ],
-      ),
+      body: new AppBody(
+          isPortrait: isPortrait,
+          showChart: _showChart,
+          mediaQuery: mediaQuery,
+          appBar: appBar,
+          recentTransactions: _recentTransactions,
+          txList: txList),
     );
   }
 }
