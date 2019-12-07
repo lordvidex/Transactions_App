@@ -168,7 +168,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('Show Chart',style: Theme.of(context).textTheme.title),
+                Text(
+                  'Show Chart',
+                  style: Theme.of(context).textTheme.title,
+                ),
                 Switch.adaptive(
                   activeColor: Theme.of(context).primaryColor,
                   value: _showChart,
