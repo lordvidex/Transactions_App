@@ -17,7 +17,7 @@ class AppBody extends StatefulWidget {
         super(key: key);
 
   final bool isPortrait;
-   bool _showChart;
+  bool _showChart;
   final MediaQueryData mediaQuery;
   final AppBar appBar;
   final List<Transaction> _recentTransactions;
@@ -28,44 +28,56 @@ class AppBody extends StatefulWidget {
 }
 
 class _AppbodyState extends State<AppBody> {
+  List<Widget> _buildPortraitContent() {
+    return [
+      Container(
+        height: (widget.mediaQuery.size.height -
+                widget.appBar.preferredSize.height -
+                widget.mediaQuery.padding.top) *
+            0.3,
+        child: Chart(widget._recentTransactions),
+      ),
+      widget.txList,
+    ];
+  }
+
+  List<Widget> _buildLandscapeContent() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text('Show Chart'),
+          Switch.adaptive(
+            activeColor: Theme.of(context).primaryColor,
+            value: widget._showChart,
+            onChanged: (val) {
+              setState(() {
+                widget._showChart = val;
+              });
+            },
+          ),
+        ],
+      ),
+      widget._showChart
+          ? Container(
+              height: (widget.mediaQuery.size.height -
+                      widget.appBar.preferredSize.height -
+                      widget.mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(widget._recentTransactions),
+            )
+          : widget.txList
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (!widget.isPortrait)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Show Chart'),
-              Switch(
-                value: widget._showChart,
-                onChanged: (val) {
-                  setState(() {
-                    widget._showChart = val;
-                  });
-                },
-              ),
-            ],
-          ),
-        if (widget.isPortrait)
-          Container(
-              height: (widget.mediaQuery.size.height -
-                      widget.appBar.preferredSize.height -
-                      widget.mediaQuery.padding.top) *
-                  0.3,
-              child: Chart(widget._recentTransactions)),
-        if (widget.isPortrait) widget.txList,
-        if (!widget.isPortrait)
-          widget._showChart
-              ? Container(
-                  height: (widget.mediaQuery.size.height -
-                          widget.appBar.preferredSize.height -
-                          widget.mediaQuery.padding.top) *
-                      0.7,
-                  child: Chart(widget._recentTransactions))
-              : widget.txList
+        if (!widget.isPortrait) ..._buildLandscapeContent(),
+        if (widget.isPortrait) ..._buildPortraitContent(),
       ],
     );
   }

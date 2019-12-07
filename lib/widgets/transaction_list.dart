@@ -1,6 +1,7 @@
-import '../models/transaction.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
+import '../models/transaction.dart';
+import './transaction_list_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -37,46 +38,7 @@ class TransactionList extends StatelessWidget {
         : ListView.builder(
             itemCount: transactions.length,
             itemBuilder: (cont, index) {
-              return Card(
-                elevation: 5,
-                margin: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: FittedBox(
-                          child: Text(
-                              "\$${transactions[index].amount.toStringAsFixed(2)}")),
-                    ),
-                  ),
-                  title: Text(
-                    transactions[index].title,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    DateFormat('MMM dd, yyyy')
-                        .format(transactions[index].date),
-                  ),
-                  trailing: MediaQuery.of(context).size.width>460?
-                  FlatButton.icon(
-                    onPressed: () => deleteTx(transactions[index].id),
-                    icon: Icon(
-                      Icons.delete,
-                      color: Theme.of(context).errorColor,
-                    ),
-                    label: Text('Delete'),
-                    textColor: Theme.of(context).errorColor,
-                  )
-                  :IconButton(
-                    icon: Icon(
-                      Icons.delete,
-                      color: Theme.of(context).errorColor,
-                    ),
-                    onPressed: () => deleteTx(transactions[index].id),
-                  ),
-                ),
-              );
+              return TransactionListItem(transactions: transactions, index: index, deleteTx:deleteTx,);
             },
           );
   }

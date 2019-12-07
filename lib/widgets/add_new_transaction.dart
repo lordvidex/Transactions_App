@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -49,7 +52,7 @@ class _NewTransactionState extends State<NewTransaction> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-          child: Card(
+      child: Card(
         elevation: 5,
         child: Padding(
           padding: EdgeInsets.only(
@@ -70,8 +73,8 @@ class _NewTransactionState extends State<NewTransaction> {
               ),
               TextField(
                 onSubmitted: (_) => _checkForErrors,
-                keyboardType:
-                    TextInputType.numberWithOptions(signed: false, decimal: true),
+                keyboardType: TextInputType.numberWithOptions(
+                    signed: false, decimal: true),
                 controller: amountController,
                 decoration: InputDecoration(
                   labelText: 'Amount',
@@ -100,12 +103,19 @@ class _NewTransactionState extends State<NewTransaction> {
                 ),
               ),
 
-              RaisedButton(
-                child: Text('Add Transaction'),
-                color: Theme.of(context).primaryColor,
-                textColor: Theme.of(context).textTheme.button.color,
-                onPressed: _checkForErrors,
-              ),
+              Platform.isIOS
+                  ? CupertinoButton(
+                    child: Text('Add Transactions'),
+                    onPressed: _checkForErrors,
+                    
+                      color: Theme.of(context).primaryColor,
+                    )
+                  : RaisedButton(
+                      child: Text('Add Transaction'),
+                      color: Theme.of(context).primaryColor,
+                      textColor: Theme.of(context).textTheme.button.color,
+                      onPressed: _checkForErrors,
+                    ),
             ],
           ),
         ),
